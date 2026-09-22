@@ -20,6 +20,25 @@ description: |
 
 metadata:
   categories: Project Management, Developer Tools
+   # vendorIdentity tells Obot which MCP tool returns the logged-in vendor user.
+  # Obot calls that tool with the member's stored OAuth token and maps the
+  # response fields below. Project Hub reads enforce/onMismatch to decide
+  # whether to compare against the assigned account and block on mismatch.
+  #
+  # Omit this block (or set enforce: false) to disable identity verification.
+  vendorIdentity: |
+    {
+      "provider": "linear",
+      "enforce": true,
+      "onMismatch": "block",
+      "tool": "get_user",
+      "args": {},
+      "fields": {
+        "accountId": "account_id",
+        "login": "email",
+        "display": "name"
+      }
+    }
   authMechanisms: |
     [
       {
