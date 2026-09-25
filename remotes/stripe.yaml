@@ -1,0 +1,77 @@
+name: Stripe
+entryKey: ablv-stripe
+serverUserType: singleUser
+shortDescription: Process payments, manage subscriptions, invoices, customers, and disputes with Stripe
+description: |
+  Manage Stripe customers, products, payments, subscriptions, invoices, disputes, and other commerce workflows through [Stripe's MCP server](https://docs.stripe.com/mcp).
+
+  ## Features
+  - **Customer Management**: Create, list, and manage customers with comprehensive data handling
+  - **Product & Pricing**: Create products and flexible pricing models including one-time and recurring billing
+  - **Payment Processing**: Handle payment intents, refunds, and payment links for seamless transactions
+  - **Subscription Billing**: Full subscription lifecycle management with updates, cancellations, and modifications
+  - **Invoice System**: Create, manage, finalize, and track invoices with line items
+  - **Dispute Resolution**: List and respond to disputes with evidence submission
+  - **Coupon Management**: Create and manage discount coupons with flexible terms
+  - **Search & Discovery**: Advanced search across all Stripe resources with custom query syntax
+  - **Account Operations**: Access account information and balance details
+
+  ## What you'll need to connect
+
+  **No Setup Required**: Authentication is handled automatically through OAuth2 workflow
+
+metadata:
+  categories: SaaS & API Integrations,Payments,Billing
+icon: https://avatars.githubusercontent.com/u/856813?s=200&v=4
+repoURL: https://docs.stripe.com/mcp
+toolPreview:
+  # API tools
+  - name: stripe_api_search
+    description: Search for Stripe API methods by keyword.
+    params:
+      keyword: Keyword used to find matching Stripe API methods
+
+  - name: stripe_api_details
+    description: Get detailed parameter information for a specific Stripe API method.
+    params: {}
+
+  - name: stripe_api_read
+    description: Read data with any supported Stripe API GET method.
+    params: {}
+
+  - name: stripe_api_write
+    description: Write data with any supported Stripe API POST, PATCH, PUT, or DELETE method. Some writes, such as refunds and outbound payments, require human confirmation before Stripe runs them.
+    params: {}
+
+  # Account
+  - name: get_stripe_account_info
+    description: Retrieve the connected Stripe account.
+    params: {}
+
+  # Analytics
+  - name: stripe_analytics
+    description: Query metrics, analyze subscriptions and billing, and run financial reports (preview). With Sigma, builds SQL queries from natural language.
+    params: {}
+
+  # Treasury (public preview)
+  - name: get_balance_summary
+    description: Display an interactive balance summary across the Stripe balance and Treasury accounts.
+    params: {}
+
+  # Documentation, planning, and feedback
+  - name: search_stripe_documentation
+    description: Search the Stripe documentation for the given question and language.
+    params:
+      question: The question to answer from the Stripe documentation
+      language: Programming language context for the answer
+
+  - name: stripe_implementation_planner
+    description: Guides you through Stripe products to accept payments, sell products online, set up billing, or build any Stripe integration.
+    params: {}
+
+  - name: send_stripe_feedback
+    description: Share feedback about Stripe's products.
+    params: {}
+runtime: remote
+remoteConfig:
+  fixedURL: https://mcp.stripe.com 
