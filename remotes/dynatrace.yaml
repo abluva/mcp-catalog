@@ -1,5 +1,5 @@
 name: Dynatrace
-entryKey: obot-dynatrace
+entryKey: ablv-dynatrace
 serverUserType: singleUser
 shortDescription: Access Dynatrace observability data and intelligence through the official hosted MCP server
 upgradeNote: |

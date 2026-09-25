@@ -1,5 +1,5 @@
 name: Supabase
-entryKey: obot-supabase
+entryKey: ablv-supabase
 serverUserType: singleUser
 shortDescription: Connect to Supabase with selectable read-only access and OAuth or a personal access token
 upgradeNote: |

@@ -1,5 +1,5 @@
 name: MongoDB Atlas
-entryKey: obot-mongodb-atlas
+entryKey: ablv-mongodb-atlas
 serverUserType: singleUser
 shortDescription: Manage MongoDB Atlas infrastructure and databases through MongoDB's hosted MCP server
 description: |

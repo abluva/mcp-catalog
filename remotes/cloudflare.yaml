@@ -1,5 +1,5 @@
 name: Cloudflare
-entryKey: obot-cloudflare
+entryKey: ablv-cloudflare
 serverUserType: singleUser
 shortDescription: Search and manage the full Cloudflare API through Cloudflare's Code Mode MCP server
 upgradeNote: |

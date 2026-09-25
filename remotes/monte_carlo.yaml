@@ -1,5 +1,5 @@
 name: Monte Carlo
-entryKey: obot-monte-carlo
+entryKey: ablv-monte-carlo
 serverUserType: singleUser
 shortDescription: Investigate data incidents, lineage, monitors, and observability assets
 description: |

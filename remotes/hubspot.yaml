@@ -1,5 +1,5 @@
 name: HubSpot
-entryKey: obot-hubspot
+entryKey: ablv-hubspot
 serverUserType: singleUser
 shortDescription: Connect to HubSpot CRM data with secure, per-user OAuth access
 description: |

@@ -1,5 +1,5 @@
 name: Chroma Cloud
-entryKey: obot-chroma-cloud
+entryKey: ablv-chroma-cloud
 serverUserType: singleUser
 shortDescription: Manage collections, documents, and vector search in Chroma embedding database
 description: '**DEPRECATED**: this server is no longer supported by the Obot MCP Catalog. No direct replacement is currently available.

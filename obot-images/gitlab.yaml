@@ -1,5 +1,5 @@
 name: GitLab
-entryKey: obot-gitlab
+entryKey: ablv-gitlab
 serverUserType: singleUser
 shortDescription: Manage GitLab projects, repositories, issues, merge requests, and CI/CD pipelines
 description: 'Manage GitLab projects, repositories, issues, merge requests, CI/CD pipelines, and other development workflows.

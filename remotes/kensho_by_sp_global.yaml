@@ -1,5 +1,5 @@
 name: Kensho by S&P Global
-entryKey: obot-sp-global-deterministic-retrieval
+entryKey: ablv-sp-global-deterministic-retrieval
 serverUserType: singleUser
 shortDescription: Retrieve structured S&P Global company and financial data
 description: |

@@ -1,5 +1,5 @@
 name: Wix
-entryKey: obot-wix
+entryKey: ablv-wix
 serverUserType: singleUser
 shortDescription: Access Wix APIs to manage sites, bookings, pricing plans, and CMS
 description: |

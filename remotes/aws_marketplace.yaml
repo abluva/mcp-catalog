@@ -1,5 +1,5 @@
 name: AWS Marketplace
-entryKey: obot-aws-marketplace
+entryKey: ablv-aws-marketplace
 serverUserType: singleUser
 shortDescription: Discover and compare software and services in AWS Marketplace
 description: |

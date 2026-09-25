@@ -1,5 +1,5 @@
 name: MongoDB Database
-entryKey: obot-mongodb-database
+entryKey: ablv-mongodb-database
 serverUserType: singleUser
 shortDescription: Manage MongoDB databases, collections, documents, and aggregation pipelines
 description: |

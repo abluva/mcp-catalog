@@ -1,5 +1,5 @@
 name: Azure
-entryKey: obot-azure
+entryKey: ablv-azure
 serverUserType: singleUser
 shortDescription: Manage Azure services including AI, databases, compute, storage, and monitoring
 description: 'Manage Azure compute, storage, databases, AI services, and other cloud resources.

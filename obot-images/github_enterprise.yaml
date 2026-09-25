@@ -1,5 +1,5 @@
 name: GitHub Enterprise
-entryKey: obot-github-enterprise
+entryKey: ablv-github-enterprise
 serverUserType: singleUser
 shortDescription: Connect AI tools to GitHub Enterprise Server
 description: |

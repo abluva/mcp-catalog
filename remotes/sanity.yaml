@@ -1,5 +1,5 @@
 name: Sanity
-entryKey: obot-sanity
+entryKey: ablv-sanity
 serverUserType: singleUser
 shortDescription: Create, query, publish, and manage structured content in Sanity
 description: |

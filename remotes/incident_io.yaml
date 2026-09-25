@@ -1,5 +1,5 @@
 name: incident.io
-entryKey: obot-incident-io
+entryKey: ablv-incident-io
 serverUserType: singleUser
 shortDescription: Manage incidents, pages, follow-ups, on-call schedules, and operational analysis
 description: |

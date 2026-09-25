@@ -1,5 +1,5 @@
 name: Asana
-entryKey: obot-asana
+entryKey: ablv-asana
 serverUserType: singleUser
 shortDescription: Manage Asana tasks, projects, and portfolios through Asana's official MCP server
 upgradeNote: |

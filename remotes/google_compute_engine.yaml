@@ -1,5 +1,5 @@
 name: Google Compute Engine
-entryKey: obot-google-compute-engine
+entryKey: ablv-google-compute-engine
 serverUserType: singleUser
 shortDescription: Create, inspect, and operate Google Compute Engine resources
 description: |

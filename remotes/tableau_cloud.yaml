@@ -1,5 +1,5 @@
 name: Tableau Cloud
-entryKey: obot-tableau-cloud
+entryKey: ablv-tableau-cloud
 serverUserType: singleUser
 shortDescription: Query Tableau Cloud data, explore content, and manage Pulse metrics with OAuth
 description: |

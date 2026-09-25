@@ -1,5 +1,5 @@
 name: Hugging Face
-entryKey: obot-hugging-face
+entryKey: ablv-hugging-face
 serverUserType: singleUser
 shortDescription: Search Hugging Face models, datasets, papers, docs, and Spaces
 description: |

@@ -1,5 +1,5 @@
 name: Snowflake
-entryKey: obot-snowflake
+entryKey: ablv-snowflake
 serverUserType: singleUser
 shortDescription: Connect to a Snowflake-managed MCP server with OAuth and native RBAC
 upgradeNote: |

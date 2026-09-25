@@ -13,7 +13,7 @@ Catalog entries must:
 
 # Catalog Validation
 
-New catalog entries must use an `entryKey` prefixed with `obot-`.
+New catalog entries must use an `entryKey` prefixed with `ablv-`.
 
 After changing catalog YAML files, validate all entries before finishing:
 

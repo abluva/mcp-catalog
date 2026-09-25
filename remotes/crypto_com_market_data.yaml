@@ -1,5 +1,5 @@
 name: Crypto.com Market Data
-entryKey: obot-crypto-com-market-data
+entryKey: ablv-crypto-com-market-data
 serverUserType: singleUser
 shortDescription: Retrieve real-time cryptocurrency order books, trades, and candles
 description: |

@@ -1,5 +1,5 @@
 name: MailerLite
-entryKey: obot-mailerlite
+entryKey: ablv-mailerlite
 serverUserType: singleUser
 shortDescription: Manage MailerLite subscribers, campaigns, automations, and forms
 description: |

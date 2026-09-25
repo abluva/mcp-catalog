@@ -1,5 +1,5 @@
 name: Grafana Cloud
-entryKey: obot-grafana-cloud
+entryKey: ablv-grafana-cloud
 serverUserType: singleUser
 shortDescription: Query Grafana Cloud metrics, logs, dashboards, alerts, incidents, and on-call schedules with OAuth
 description: |

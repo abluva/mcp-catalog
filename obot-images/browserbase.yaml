@@ -1,5 +1,5 @@
 name: Browserbase
-entryKey: obot-browserbase
+entryKey: ablv-browserbase
 serverUserType: singleUser
 shortDescription: Cloud browser automation with web scraping, screenshots, and AI interactions
 description: '**DEPRECATED**: this server is no longer supported by the Obot MCP Catalog. No approved replacement is currently available. Browserbase''s hosted MCP is not approved because it requires API keys in URL query parameters.

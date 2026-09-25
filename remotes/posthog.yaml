@@ -1,5 +1,5 @@
 name: PostHog
-entryKey: obot-posthog
+entryKey: ablv-posthog
 serverUserType: singleUser
 shortDescription: Query product analytics and manage PostHog insights and experiments
 description: |

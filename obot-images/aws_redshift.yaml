@@ -1,5 +1,5 @@
 name: AWS Redshift
-entryKey: obot-aws-redshift
+entryKey: ablv-aws-redshift
 serverUserType: singleUser
 shortDescription: Discover, explore, and query Amazon Redshift clusters and serverless workgroups
 description: 'Discover, explore, and query Amazon Redshift clusters and serverless workgroups safely and efficiently.

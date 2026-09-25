@@ -1,5 +1,5 @@
 name: Google Cloud Run
-entryKey: obot-google-cloud-run
+entryKey: ablv-google-cloud-run
 serverUserType: singleUser
 shortDescription: Inspect and deploy Cloud Run services through Google's managed MCP server
 upgradeNote: |

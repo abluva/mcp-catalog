@@ -1,5 +1,5 @@
 name: DuckDuckGo Search
-entryKey: obot-duckduckgo-search
+entryKey: ablv-duckduckgo-search
 serverUserType: singleUser
 shortDescription: Search the web with DuckDuckGo and retrieve webpage content with parsing
 description: 'Search the web through DuckDuckGo and retrieve parsed webpage content with LLM-friendly formatting.

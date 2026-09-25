@@ -1,5 +1,5 @@
 name: Sentry
-entryKey: obot-sentry
+entryKey: ablv-sentry
 serverUserType: singleUser
 shortDescription: Search, investigate, and manage Sentry errors, issues, and projects
 description: |

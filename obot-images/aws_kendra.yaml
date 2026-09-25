@@ -1,5 +1,5 @@
 name: AWS Kendra
-entryKey: obot-aws-kendra
+entryKey: ablv-aws-kendra
 serverUserType: singleUser
 shortDescription: Query Amazon Kendra indices for enhanced RAG context in AI applications
 description: 'Query Amazon Kendra indices as additional RAG context for chatbots and coding assistants.

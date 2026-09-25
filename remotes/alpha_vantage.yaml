@@ -1,5 +1,5 @@
 name: Alpha Vantage
-entryKey: obot-alpha-vantage
+entryKey: ablv-alpha-vantage
 serverUserType: singleUser
 shortDescription: Query market prices, fundamentals, options, indicators, and economic data
 description: |

@@ -1,5 +1,5 @@
 name: DigitalOcean
-entryKey: obot-digitalocean
+entryKey: ablv-digitalocean
 serverUserType: singleUser
 shortDescription: Manage an official DigitalOcean service with a personal access token
 upgradeNote: |

@@ -1,5 +1,5 @@
 name: Railway
-entryKey: obot-railway
+entryKey: ablv-railway
 serverUserType: singleUser
 shortDescription: Deploy, manage, and debug Railway projects and services
 description: |

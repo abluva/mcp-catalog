@@ -1,5 +1,5 @@
 name: Scholar Gateway
-entryKey: obot-scholar-gateway
+entryKey: ablv-scholar-gateway
 serverUserType: singleUser
 shortDescription: Search peer-reviewed Wiley research with verifiable citations and DOI links
 description: |

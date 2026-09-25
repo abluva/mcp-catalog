@@ -1,5 +1,5 @@
 name: Firecrawl
-entryKey: obot-firecrawl
+entryKey: ablv-firecrawl
 serverUserType: singleUser
 shortDescription: Search, scrape, crawl, interact with, and monitor the web using Firecrawl's official hosted MCP
 upgradeNote: |

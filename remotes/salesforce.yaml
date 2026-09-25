@@ -1,5 +1,5 @@
 name: Salesforce
-entryKey: obot-salesforce
+entryKey: ablv-salesforce
 serverUserType: singleUser
 shortDescription: Access Salesforce records through Salesforce's hosted MCP servers
 upgradeNote: |

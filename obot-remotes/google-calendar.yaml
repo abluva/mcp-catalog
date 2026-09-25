@@ -1,5 +1,5 @@
 name: Google Calendar
-entryKey: obot-google-calendar
+entryKey: ablv-google-calendar
 serverUserType: singleUser
 shortDescription: Manage Google Calendar events, recurring events, and attendees with OAuth2
 description: |

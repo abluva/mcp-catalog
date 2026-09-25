@@ -1,5 +1,5 @@
 name: Mixpanel
-entryKey: obot-mixpanel
+entryKey: ablv-mixpanel
 serverUserType: singleUser
 shortDescription: Analyze events, funnels, retention, experiments, replays, dashboards, and data quality
 description: |

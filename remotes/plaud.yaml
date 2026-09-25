@@ -1,5 +1,5 @@
 name: Plaud
-entryKey: obot-plaud
+entryKey: ablv-plaud
 serverUserType: singleUser
 shortDescription: Search Plaud recordings and retrieve transcripts, summaries, notes, and action items
 description: |

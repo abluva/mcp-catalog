@@ -1,5 +1,5 @@
 name: Brevo
-entryKey: obot-brevo
+entryKey: ablv-brevo
 serverUserType: singleUser
 shortDescription: Analyze Brevo campaigns, contacts, and audience segments
 description: |

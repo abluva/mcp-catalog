@@ -1,5 +1,5 @@
 name: AWS EKS
-entryKey: obot-aws-eks
+entryKey: ablv-aws-eks
 serverUserType: singleUser
 shortDescription: Manage Amazon EKS clusters, Kubernetes resources, and containerized applications
 description: 'Manage Amazon EKS resources and inspect real-time cluster state, with guidance from initial setup through production optimization and troubleshooting.

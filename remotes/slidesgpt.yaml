@@ -1,5 +1,5 @@
 name: SlidesGPT
-entryKey: obot-slidesgpt
+entryKey: ablv-slidesgpt
 serverUserType: singleUser
 shortDescription: Generate presentation decks, apply themes, create images, and export PowerPoint files
 description: |

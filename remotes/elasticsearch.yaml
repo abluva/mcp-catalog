@@ -1,5 +1,5 @@
 name: Elasticsearch
-entryKey: obot-elasticsearch
+entryKey: ablv-elasticsearch
 serverUserType: singleUser
 shortDescription: Search and analyze Elasticsearch data with Elastic's Agent Builder tools
 upgradeNote: |

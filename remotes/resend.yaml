@@ -1,5 +1,5 @@
 name: Resend
-entryKey: obot-resend
+entryKey: ablv-resend
 serverUserType: singleUser
 shortDescription: Manage email delivery, audiences, domains, and automations in Resend
 description: |

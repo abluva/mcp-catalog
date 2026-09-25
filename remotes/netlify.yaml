@@ -1,5 +1,5 @@
 name: Netlify
-entryKey: obot-netlify
+entryKey: ablv-netlify
 serverUserType: singleUser
 shortDescription: Create, deploy, manage, and secure websites on Netlify
 description: |

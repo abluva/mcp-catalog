@@ -1,5 +1,5 @@
 name: Read AI
-entryKey: obot-read-ai
+entryKey: ablv-read-ai
 serverUserType: singleUser
 shortDescription: Retrieve meeting transcripts and summaries, dispatch agents, and share reports
 description: |

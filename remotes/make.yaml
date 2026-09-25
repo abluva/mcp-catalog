@@ -1,5 +1,5 @@
 name: Make
-entryKey: obot-make
+entryKey: ablv-make
 serverUserType: singleUser
 shortDescription: Run and manage Make scenarios, connections, teams, and data stores
 description: |

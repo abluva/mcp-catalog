@@ -1,5 +1,5 @@
 name: GitHub
-entryKey: obot-github
+entryKey: ablv-github
 serverUserType: singleUser
 shortDescription: Manage GitHub repositories, issues, PRs, workflows, and CI/CD operations
 upgradeNote: |

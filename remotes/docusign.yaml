@@ -1,5 +1,5 @@
 name: Docusign
-entryKey: obot-docusign
+entryKey: ablv-docusign
 serverUserType: singleUser
 shortDescription: Search agreements and manage Docusign envelopes and workflows
 description: |

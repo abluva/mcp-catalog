@@ -1,5 +1,5 @@
 name: Postman
-entryKey: obot-postman
+entryKey: ablv-postman
 serverUserType: singleUser
 shortDescription: Connect to Postman collections, workspaces, environments, mocks, and API specs
 upgradeNote: |

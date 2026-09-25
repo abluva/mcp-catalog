@@ -1,5 +1,5 @@
 name: Trello
-entryKey: obot-trello
+entryKey: ablv-trello
 serverUserType: singleUser
 shortDescription: Search and manage Trello workspaces, boards, lists, cards, checklists, Inbox, and Planner
 description: |
