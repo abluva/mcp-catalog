@@ -1,11 +1,11 @@
 name: DigitalOcean
 entryKey: ablv-digitalocean
 serverUserType: singleUser
-shortDescription: Manage an official DigitalOcean service with a personal access token
+shortDescription: Manage an official DigitalOcean service with OAuth or a personal access token
 upgradeNote: |
   This replaces the Obot-hosted DigitalOcean server with DigitalOcean's official hosted MCP servers.
 
-  - **Reconnect required:** Provide a DigitalOcean personal access token and select one service for each connection.
+  - **Reconnect required:** Sign in with DigitalOcean OAuth or provide a personal access token, and select one service for each connection.
   - **Configuration change:** The previous comma-separated enabled-services setting is no longer used; create separate connections for multiple services.
   - **Tool changes:** Available tools and parameters now follow each DigitalOcean-hosted service.
 description: |
@@ -13,7 +13,15 @@ description: |
 
   See the [official DigitalOcean MCP documentation](https://docs.digitalocean.com/products/app-platform/reference/mcp/) for setup guidance and service details.
 
-  Authentication uses a DigitalOcean personal access token. Create a token with the least-privilege scopes required for the selected service at https://cloud.digitalocean.com/account/api/tokens.
+  ## What you'll need to connect
+
+  DigitalOcean supports two authentication methods for its remote MCP servers. Pick one per deployment.
+
+  **OAuth 2.0 (recommended):** Sign in with DigitalOcean when prompted. No long-lived credential is stored for the connection. DigitalOcean supports Dynamic Client Registration for public clients such as MCP clients, and uses the authorization code flow with PKCE. Access tokens issued to public clients last one hour and are refreshed automatically. See the [DigitalOcean OAuth API reference](https://docs.digitalocean.com/reference/api/oauth/) for details.
+
+  **Personal access token:** Provide a DigitalOcean API token when a deployment needs non-interactive access. Create one with the least-privilege scopes required for the selected service at https://cloud.digitalocean.com/account/api/tokens, and include `account:read` so identity verification can resolve the connected account.
+
+  The Documentation (`docs`) service needs no authentication; leave both the OAuth connection and the token empty for it.
 
   ## Features
 
@@ -59,6 +67,59 @@ description: |
 metadata:
   categories: Cloud & Infrastructure, Developer Tools
   allow-multiple: "true"
+  # vendorIdentity tells Obot how to resolve the logged-in vendor user. See
+  # atlassian.yaml for the tool-based form and outlook.yaml for probes.
+  # Omit this block (or set enforce: false) to disable identity verification.
+  #
+  # An HTTP probe is used instead of an MCP tool because DigitalOcean's
+  # `account-get-information` tool only exists on the `accounts` server, and
+  # this entry binds one service per connection. GET /v2/account works with
+  # both OAuth and PAT credentials regardless of the selected service, and
+  # requires the `account:read` scope.
+  vendorIdentity: |
+    {
+      "provider": "digitalocean",
+      "enforce": true,
+      "onMismatch": "block",
+      "probes": [
+        {
+          "type": "http",
+          "url": "https://api.digitalocean.com/v2/account",
+          "fields": {
+            "accountId": "account.uuid",
+            "login": "account.email",
+            "display": "account.name"
+          }
+        }
+      ]
+    }
+  # authMechanisms declares vendor auth options shown at launch. Each deployment
+  # instance picks one; filter-selector routes by metadata.auth_mechanism.
+  authMechanisms: |
+    [
+      {
+        "value": "oauth",
+        "label": "OAuth 2.0",
+        "description": "Sign in with DigitalOcean; vendor identity is verified per assignment in Projects.",
+        "requiresVendorIdentity": true
+      },
+      {
+        "value": "pat",
+        "label": "Personal Access Token",
+        "description": "Use a DigitalOcean API token for this deployment (no per-user vendor OAuth).",
+        "requiresVendorIdentity": false,
+        "headers": [
+          {
+            "name": "DigitalOcean API Token",
+            "key": "Authorization",
+            "required": true,
+            "sensitive": true,
+            "prefix": "Bearer ",
+            "description": "Personal access token with least-privilege scopes for the selected service, including account:read"
+          }
+        ]
+      }
+    ]
 icon: https://cdn.brandfetch.io/idvF37rNoN/theme/dark/symbol.svg?c=1dxbfHSJFAPEGdCLU4o5B
 repoURL: https://docs.digitalocean.com/products/app-platform/reference/mcp/
 runtime: remote
@@ -127,8 +188,8 @@ remoteConfig:
   urlTemplate: https://${DIGITALOCEAN_SERVICE}.mcp.digitalocean.com/mcp
   headers:
   - name: DigitalOcean API Token
-    description: Personal access token with permissions for the selected service
+    description: Personal access token with permissions for the selected service; leave empty when using OAuth
     key: Authorization
-    required: true
+    required: false
     sensitive: true
     prefix: "Bearer "
