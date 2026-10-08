@@ -5,7 +5,7 @@ shortDescription: Query Datadog observability data and manage platform features 
 upgradeNote: |
   This replaces the Obot-hosted Datadog server with Datadog's official hosted MCP server.
 
-  - **Reconnect required:** Connect with Datadog OAuth or a Personal or Service Access Token. The previous API key, application key, and site settings are no longer used.
+  - **Reconnect required:** Choose one of three authentication methods — Datadog OAuth, a Personal or Service Access Token, or a Datadog API key and application key pair. Your previous API key, application key, and site settings are not carried over and must be replaced, even if you select the API-key-pair method again.
   - **Region:** This entry connects to Datadog US1.
   - **Tool changes:** Tool names, parameters, permissions, and available toolsets change.
 description: |
@@ -19,37 +19,117 @@ description: |
   - **Datadog authorization**: OAuth authenticates as the Datadog user and respects their Datadog roles and resource permissions.
 
   ## What you'll need to connect
+
   - **Datadog account**: The MCP server is available on supported commercial Datadog sites. It is not supported for Datadog GovCloud.
-  - **OAuth access**: Complete the Datadog OAuth flow when prompted. Your role requires `mcp_read` for read tools, `mcp_write` for write tools, and the underlying Datadog resource permissions. For non-interactive connections, optionally provide a Datadog Personal Access Token (PAT) or Service Access Token (SAT).
+  - **Permissions**: Your role needs `mcp_read` for read tools, `mcp_write` for write tools, and the underlying Datadog resource permission for each tool. The Datadog Standard Role includes both MCP permissions by default.
   - **Regional endpoint**: This entry uses Datadog's US1 endpoint. For another Datadog site, follow the [official setup guide](https://docs.datadoghq.com/mcp_server/setup/) to use that site's endpoint.
+
+  Datadog supports three authentication methods. Pick one per deployment.
+
+  **OAuth 2.0 (recommended):** Sign in with Datadog when prompted. Tools then run with your own Datadog roles and resource permissions, and no manually supplied API key or token is required. Datadog's authorization server supports Dynamic Client Registration and requires PKCE with `S256`.
+
+  Before the first OAuth connection, a Datadog administrator must allowlist the callback URL under **Organization Settings > MCP OAuth Redirect URLs**. Add the callback URL shown by Obot, then select **Add URL**.
+
+  **Personal or Service Access Token:** The preferred header-based option. Pass a Datadog Personal Access Token for an individual user, or a Service Access Token for a service account, as a bearer token. No API key is needed. Note that a Service Access Token acts as a non-human service account rather than a person.
+
+  **API key and application key:** Alternatively, provide a Datadog API key and application key. Requests act with the permissions of the application key's owner, so use a scoped key pair from a service account that holds only the permissions you need.
 
   ## Important considerations
   - The default core toolset includes read tools and notebook create/edit tools. Enable additional toolsets only when needed to conserve context and limit the available actions.
-  - Datadog documents fair-use limits of 50 tool calls per 10 seconds and 50,000 monthly tool calls, subject to change.
+  - Datadog documents fair-use limits of 50 requests per 10 seconds and 100,000 monthly tool calls, subject to change.
   - Datadog retains remote-MCP usage, error, identity, and relevant prompt-context data for 120 days. Review the [official service documentation](https://docs.datadoghq.com/mcp_server/) before connecting sensitive workloads.
 
   > **⚠️ Upgrade notice**
   >
   > If you're upgrading this server, note that this replaces the Obot-hosted Datadog server with Datadog's official hosted MCP server.
   >
-  > - **Reconnect required:** Connect with Datadog OAuth or a Personal or Service Access Token. The previous API key, application key, and site settings are no longer used.
+  > - **Reconnect required:** Choose one of three authentication methods — Datadog OAuth, a Personal or Service Access Token, or a Datadog API key and application key pair. Your previous API key, application key, and site settings are not carried over and must be replaced, even if you select the API-key-pair method again.
   > - **Region:** This entry connects to Datadog US1.
   > - **Tool changes:** Tool names, parameters, permissions, and available toolsets change.
 
 metadata:
   categories: Monitoring & Observability, SaaS & API Integrations
-  repoURL: https://docs.datadoghq.com/mcp_server/
+  # vendorIdentity is intentionally omitted. Datadog exposes no current-user MCP
+  # tool, and the documented REST fallback (GET /api/v2/current_user, which
+  # returns data.id plus data.attributes.uuid, email, handle, and name, and
+  # needs no extra RBAC permission) is not confirmed to accept an MCP-flow OAuth
+  # token: mcp_all is the only scope the MCP authorization server advertises,
+  # and the documented examples for that endpoint use a PAT or SAT. A Service
+  # Access Token also resolves to a service account rather than a person, and
+  # the probe host is region-specific (api.datadoghq.com is US1 only).
+  # Add vendorIdentity only after verifying that token against that endpoint.
+  #
+  # authMechanisms declares vendor auth options shown at launch. Each deployment
+  # instance picks one; filter-selector routes by metadata.auth_mechanism.
+  authMechanisms: |
+    [
+      {
+        "value": "oauth",
+        "label": "OAuth 2.0",
+        "description": "Sign in with Datadog; tools run with your own Datadog roles and resource permissions.",
+        "requiresVendorIdentity": false
+      },
+      {
+        "value": "pat",
+        "label": "Personal or Service Access Token",
+        "description": "Use a Datadog Personal Access Token for an individual user, or a Service Access Token for a service account.",
+        "requiresVendorIdentity": false,
+        "headers": [
+          {
+            "name": "Datadog Personal or Service Access Token",
+            "key": "Authorization",
+            "required": true,
+            "sensitive": true,
+            "prefix": "Bearer ",
+            "description": "Datadog PAT or SAT whose role grants the mcp_read and mcp_write permissions the selected tools require"
+          }
+        ]
+      },
+      {
+        "value": "api_keys",
+        "label": "API Key and Application Key",
+        "description": "Use a scoped Datadog API key and application key; requests act with the application key owner's permissions.",
+        "requiresVendorIdentity": false,
+        "headers": [
+          {
+            "name": "Datadog API Key",
+            "key": "DD_API_KEY",
+            "required": true,
+            "sensitive": true,
+            "description": "Datadog API key for the organization"
+          },
+          {
+            "name": "Datadog Application Key",
+            "key": "DD_APPLICATION_KEY",
+            "required": true,
+            "sensitive": true,
+            "description": "Scoped Datadog application key whose owner holds only the required permissions"
+          }
+        ]
+      }
+    ]
 icon: https://avatars.githubusercontent.com/u/365230?s=200&v=4
+repoURL: https://docs.datadoghq.com/mcp_server/
 runtime: remote
 remoteConfig:
   fixedURL: https://mcp.datadoghq.com/v1/mcp
   headers:
   - name: Datadog Personal or Service Access Token
-    description: Optional. Use a Datadog PAT or SAT when OAuth is unavailable.
+    description: Optional. Use a Datadog PAT or SAT when OAuth is unavailable; leave empty when using OAuth.
     key: Authorization
     required: false
     sensitive: true
     prefix: "Bearer "
+  - name: Datadog API Key
+    description: Optional. Use with an application key when OAuth and access tokens are unavailable; leave empty otherwise.
+    key: DD_API_KEY
+    required: false
+    sensitive: true
+  - name: Datadog Application Key
+    description: Optional. Required alongside the Datadog API key; leave empty otherwise.
+    key: DD_APPLICATION_KEY
+    required: false
+    sensitive: true
 toolPreview:
 - name: aggregate_events
   description: Aggregate Datadog events.
