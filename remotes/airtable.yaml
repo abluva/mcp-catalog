@@ -13,14 +13,58 @@ description: |
 
   ## What you'll need to connect
 
-  **Required:**
-  - **Airtable Account**: Each user authenticates through OAuth and selects the bases available to the integration
-  - **Integration Permission**: Airtable administrators may need to allow third-party integrations for the organization
+  Airtable supports two authentication methods. Pick one per deployment.
+
+  **OAuth 2.0 (default):** Sign in with Airtable when prompted, then select which bases and apps this connection may access. Airtable's authorization server advertises Dynamic Client Registration and requires PKCE with `S256`.
+
+  **Personal access token:** Create a token at https://airtable.com/create/tokens with the scopes and base access this deployment needs. A full-access token requires base-level access to a base; interface-only access produces an interface-only token.
+
+  **Scopes:** For a read-only connection, grant only `data.records:read`, `schema.bases:read`, `data.recordComments:read`, and `workspacesAndBases:read`. Writing records, schema, or comments additionally needs the matching `:write` scopes.
+
+  Either method grants access only to data your Airtable permissions already allow, and calls count against standard Airtable API rate limits. Enterprise administrators may need to allowlist the integration by client ID before users can connect.
 
 metadata:
   categories: Databases, Productivity, SaaS & API Integrations
+  # vendorIdentity is intentionally omitted. Airtable documents no current-user
+  # MCP tool, and no user-identity scope is offered for this resource:
+  # user.email:read is absent from scopes_supported on both the protected
+  # resource (mcp.airtable.com/.well-known/oauth-protected-resource/mcp) and the
+  # authorization server (airtable.com/oauth2/v1). No identity field contract
+  # has been verified, so both mechanisms declare requiresVendorIdentity: false.
+  authMechanisms: |
+    [
+      {
+        "value": "oauth",
+        "label": "OAuth 2.0",
+        "description": "Sign in with Airtable and select which bases this connection may access.",
+        "requiresVendorIdentity": false
+      },
+      {
+        "value": "pat",
+        "label": "Personal Access Token",
+        "description": "Use an Airtable personal access token for this deployment (no per-user vendor OAuth).",
+        "requiresVendorIdentity": false,
+        "headers": [
+          {
+            "name": "Airtable Personal Access Token",
+            "key": "Authorization",
+            "required": true,
+            "sensitive": true,
+            "prefix": "Bearer ",
+            "description": "Airtable personal access token with the scopes and base access this deployment needs"
+          }
+        ]
+      }
+    ]
 icon: https://airtable.com/favicon.ico
 repoURL: https://support.airtable.com/using-the-airtable-mcp-server
 runtime: remote
 remoteConfig:
   fixedURL: https://mcp.airtable.com/mcp
+  headers:
+    - name: Airtable Personal Access Token
+      key: Authorization
+      required: false
+      sensitive: true
+      prefix: "Bearer "
+      description: Personal access token for PAT auth; leave empty when using OAuth
