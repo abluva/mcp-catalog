@@ -5,8 +5,8 @@ shortDescription: Search and manage the full Cloudflare API through Cloudflare's
 upgradeNote: |
   This entry now connects to Cloudflare's consolidated API MCP server instead of letting you choose a product-specific `*.mcp.cloudflare.com` server.
 
-  - **Reconnect required:** Connect with Cloudflare OAuth or provide a scoped Cloudflare API token. The previous custom server URL is no longer used.
-  - **Tool changes:** Product-specific native tools are replaced by the `docs`, `search`, and `execute` Code Mode tools. Existing tool names and parameters will change.
+  - **Reconnect required:** Choose one of two authentication methods — Cloudflare OAuth, or a scoped Cloudflare user or account API token. The previous custom server URL is not carried over and must be replaced.
+  - **Tool changes:** Product-specific native tools are replaced by the `docs`, `search`, `execute`, and `whoami` tools. Existing tool names and parameters will change.
   - **Specialized workflows:** Cloudflare's product-specific MCP servers remain available for targeted workflows, but are no longer selectable through this catalog entry.
 description: |
   Cloudflare's official, vendor-hosted API MCP server gives agents access to the full Cloudflare API without loading thousands of endpoint schemas into the model context. It searches Cloudflare documentation and the OpenAPI specification, then runs model-written JavaScript in an isolated Worker to make authorized Cloudflare API requests.
@@ -21,8 +21,12 @@ description: |
   - **GraphQL analytics**: Send Cloudflare GraphQL Analytics API queries through the same execution tool.
 
   ## What you'll need to connect
-  - **Recommended — OAuth**: Sign in to Cloudflare when prompted and select the accounts and permissions the MCP server may use.
-  - **Optional — API token**: For automation or headless use, provide a user or account API token with only the permissions required for your tasks. Account API tokens also need `Account Resources: Read` so the server can identify the account.
+
+  Cloudflare supports two authentication methods. Pick one per deployment.
+
+  **OAuth 2.0 (recommended):** Connect to the server and you are redirected to Cloudflare to authorize and select permissions. No manually supplied API key or token is required. Cloudflare's authorization server supports Dynamic Client Registration and uses the authorization code flow with PKCE and `S256`. The consent screen offers read-only and full-access scope templates, and an advanced section where you can narrow the requested scope list.
+
+  **API token:** For CI/CD, automation, or headless use, provide a Cloudflare API token as a bearer token. Both user tokens and account tokens are supported. Create one with only the permissions your tasks require. An account token additionally needs `Account Resources: Read` so the server can auto-detect the account ID. Note that an account token represents the Cloudflare account rather than an individual user.
 
   ## Important considerations
   - Code Mode is experimental and may introduce breaking changes. The server executes model-written JavaScript in an isolated Worker; API access is restricted to the permissions granted by your OAuth connection or API token.
@@ -33,12 +37,67 @@ description: |
   >
   > If you're upgrading this server, note that this entry now connects to Cloudflare's consolidated API MCP server instead of letting you choose a product-specific `*.mcp.cloudflare.com` server.
   >
-  > - **Reconnect required:** Connect with Cloudflare OAuth or provide a scoped Cloudflare API token. The previous custom server URL is no longer used.
-  > - **Tool changes:** Product-specific native tools are replaced by the `docs`, `search`, and `execute` Code Mode tools. Existing tool names and parameters will change.
+  > - **Reconnect required:** Choose one of two authentication methods — Cloudflare OAuth, or a scoped Cloudflare user or account API token. The previous custom server URL is not carried over and must be replaced.
+  > - **Tool changes:** Product-specific native tools are replaced by the `docs`, `search`, `execute`, and `whoami` tools. Existing tool names and parameters will change.
   > - **Specialized workflows:** Cloudflare's product-specific MCP servers remain available for targeted workflows, but are no longer selectable through this catalog entry.
 
 metadata:
   categories: Cloud & Infrastructure, SaaS & API Integrations
+  # vendorIdentity tells Obot which MCP tool returns the logged-in vendor user.
+  # See atlassian.yaml for the full field reference. Omit this block (or set
+  # enforce: false) to disable identity verification.
+  #
+  # Cloudflare documents `whoami` as taking no arguments and returning
+  # { id, email } for a user credential or { id, name } for an account token,
+  # where id is `user:<id>` or `account:<id>`. Cloudflare states that ID format
+  # is a permanent contract that is stable across token refresh, reconnection,
+  # and permission changes, which makes it a safe accountId. `whoami` is
+  # registered in both Code Mode and non-Code-Mode, so it is available
+  # regardless of the ?codemode query parameter.
+  #
+  # display maps to email rather than name because a user credential returns no
+  # name field; name is returned only for account tokens, which the api_token
+  # mechanism covers and which declares requiresVendorIdentity: false.
+  vendorIdentity: |
+    {
+      "provider": "cloudflare",
+      "enforce": true,
+      "onMismatch": "block",
+      "tool": "whoami",
+      "args": {},
+      "fields": {
+        "accountId": "id",
+        "login": "email",
+        "display": "email"
+      }
+    }
+  # authMechanisms declares vendor auth options shown at launch. Each deployment
+  # instance picks one; filter-selector routes by metadata.auth_mechanism.
+  authMechanisms: |
+    [
+      {
+        "value": "oauth",
+        "label": "OAuth 2.0",
+        "description": "Sign in with Cloudflare; vendor identity is verified per assignment in Projects.",
+        "requiresVendorIdentity": true
+      },
+      {
+        "value": "api_token",
+        "label": "API Token",
+        "description": "Use a scoped Cloudflare user or account API token for this deployment (no per-user vendor OAuth).",
+        "requiresVendorIdentity": false,
+        "headers": [
+          {
+            "name": "Cloudflare API Token",
+            "key": "Authorization",
+            "required": true,
+            "sensitive": true,
+            "prefix": "Bearer ",
+            "description": "Scoped Cloudflare user or account API token; account tokens also need Account Resources: Read"
+          }
+        ]
+      }
+    ]
 icon: https://avatars.githubusercontent.com/u/314135?s=48&v=4
 repoURL: https://github.com/cloudflare/mcp
 runtime: remote
@@ -65,3 +124,6 @@ toolPreview:
   params:
     code: JavaScript async arrow function that executes Cloudflare API requests
     account_id: Optional account ID for user tokens or OAuth connections with access to multiple accounts
+- name: whoami
+  description: Return the Cloudflare user or account this connection is authenticated as, as a stable `user:<id>` or `account:<id>` identifier.
+  params: {}
