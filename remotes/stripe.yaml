@@ -18,10 +18,46 @@ description: |
 
   ## What you'll need to connect
 
-  **No Setup Required**: Authentication is handled automatically through OAuth2 workflow
+  Stripe supports two authentication methods. Pick one per deployment.
+
+  **OAuth 2.0 (recommended):** Use OAuth when a client accesses Stripe on behalf of your Stripe user account. Connecting opens Stripe's OAuth consent page, where you grant access to one or more live mode accounts or sandboxes and set permissions separately for each environment. No manually supplied API key or token is required, and Stripe's authorization server supports Dynamic Client Registration with PKCE and `S256`. Authorized clients appear under **OAuth sessions** in your Stripe user settings, where you can revoke access.
+
+  **Agent API key:** Use an agent API key when an application needs independent, persistent access, such as an autonomous client that cannot complete the OAuth flow. Create a key with only the permissions the client needs and pass it as the bearer token in the `Authorization` header. Agent API keys are identifiable in the Stripe Dashboard by an **Agent** badge.
+
+  > **Key policy change on 31 October 2026:** From 31 October 2026, Stripe MCP no longer accepts full-access secret keys, or restricted API keys without the Agent tag. Replace any such key with a newly created Agent API key, or reconnect using OAuth, before that date. Requests using an unsupported key receive a `401` response with an OAuth discovery challenge. When replacing a key, test the new configuration in a sandbox before expiring the old one.
+
+  **Administrators:** MCP access can be enabled or disabled for an entire team from the Stripe Dashboard, configured separately for live mode and sandbox environments. On a managed device or network, your IT administrator may also need to allow connections to `mcp.stripe.com`.
 
 metadata:
   categories: SaaS & API Integrations,Payments,Billing
+  # vendorIdentity is omitted pending verification of a user-identity source.
+  # get_stripe_account_info returns account information, not a verified
+  # signed-in user identity. Both mechanisms use requiresVendorIdentity: false.
+  authMechanisms: |
+    [
+      {
+        "value": "oauth",
+        "label": "OAuth 2.0",
+        "description": "Sign in with Stripe and grant access to the accounts and environments this connection may use.",
+        "requiresVendorIdentity": false
+      },
+      {
+        "value": "agent_api_key",
+        "label": "Agent API Key",
+        "description": "Use a Stripe Agent API key for persistent, non-interactive access (no per-user vendor OAuth).",
+        "requiresVendorIdentity": false,
+        "headers": [
+          {
+            "name": "Stripe Agent API Key",
+            "key": "Authorization",
+            "required": true,
+            "sensitive": true,
+            "prefix": "Bearer ",
+            "description": "Stripe Agent API key scoped to the permissions this deployment needs; full-access secret keys and non-Agent restricted keys stop working on 31 October 2026"
+          }
+        ]
+      }
+    ]
 icon: https://avatars.githubusercontent.com/u/856813?s=200&v=4
 repoURL: https://docs.stripe.com/mcp
 toolPreview:
@@ -74,4 +110,11 @@ toolPreview:
     params: {}
 runtime: remote
 remoteConfig:
-  fixedURL: https://mcp.stripe.com 
+  fixedURL: https://mcp.stripe.com
+  headers:
+    - name: Stripe Agent API Key
+      key: Authorization
+      required: false
+      sensitive: true
+      prefix: "Bearer "
+      description: Stripe Agent API key for non-OAuth connections; leave empty when using OAuth
