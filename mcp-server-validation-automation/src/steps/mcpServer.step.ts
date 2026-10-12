@@ -218,10 +218,6 @@ Then(/^User connects to the "(.*)" MCP server$/, async (mcpServer: string) => {
       await slowInputFilling(Selectors.MCP.salesforce.salesforceClientSecret, process.env.SF_CLIENT_SECRET);
       break;
 
-    case "slack":
-      await slowInputFilling(Selectors.MCP.slack.slackBotToken, process.env.SLACK_BOT_TOKEN);
-      break;
-
     case "ref":
       await slowInputFilling(Selectors.MCP.ref.refAPIKey, process.env.REF_API_KEY);
       break;

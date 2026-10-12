@@ -286,9 +286,6 @@ const Selectors = {
             salesforceClientID: '//input[@id="Salesforce Client ID"]',
             salesforceClientSecret: '//input[@id="Salesforce Client Secret"]',
         },
-        slack: {
-            slackBotToken: '//input[@id="Slack Bot Token"]',
-        },
         ref: {
             refAPIKey: '//input[@id="Ref API Key"]',
         },

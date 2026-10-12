@@ -55,7 +55,6 @@ on:
           - markitdown.yaml
           - microsoft-docs.yaml
           - mondaycom.yaml
-          - mongodb_atlas_management.yaml
           - mongodb_database.yaml
           - morningstar.yaml
           - neon.yaml
@@ -71,7 +70,6 @@ on:
           - ref.yaml
           - render.yaml
           - salesforce.yaml
-          - slack.yaml
           - snowflake.yaml
           - square.yaml
           - stripe.yaml
