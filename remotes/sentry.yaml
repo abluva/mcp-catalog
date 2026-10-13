@@ -13,13 +13,48 @@ description: |
 
   ## What you'll need to connect
 
-  **Required:**
-  - **Sentry Account**: Each user authenticates through OAuth and can access organizations and projects allowed by their Sentry permissions
+  **Required (choose one):**
+  - **OAuth 2.0**: Each user signs in with their Sentry account and can access organizations and projects allowed by their Sentry permissions
+  - **Sentry User Auth Token**: A Sentry User Auth Token, created under **User Settings > Personal Tokens**, sent as `Authorization: Sentry-Bearer <token>`.Grant only the scopes required by the tools you intend to use. See [remote access with an explicit Sentry token](https://github.com/getsentry/sentry-mcp#remote-with-an-explicit-sentry-token)
 
 metadata:
   categories: Developer Tools, Monitoring & Observability, DevOps
+  # authMechanisms declares vendor auth options shown at launch. Each deployment
+  # instance picks one; filter-selector routes by metadata.auth_mechanism.
+  authMechanisms: |
+    [
+      {
+        "value": "oauth",
+        "label": "OAuth 2.0",
+        "description": "Sign in with Sentry; each user connects with their own Sentry account.",
+        "requiresVendorIdentity": false
+      },
+      {
+        "value": "pat",
+        "label": "User Auth Token",
+        "description": "Use a Sentry User Auth Token for this deployment (no per-user vendor OAuth).",
+        "requiresVendorIdentity": false,
+        "headers": [
+          {
+            "name": "Sentry User Auth Token",
+            "key": "Authorization",
+            "required": true,
+            "sensitive": true,
+            "prefix": "Sentry-Bearer ",
+            "description": "Sentry User Auth Token with the scopes required by the tools you use"
+          }
+        ]
+      }
+    ]
 icon: https://sentry.io/favicon.ico
 repoURL: https://docs.sentry.io/product/sentry-mcp/
 runtime: remote
 remoteConfig:
   fixedURL: https://mcp.sentry.dev/mcp
+  headers:
+    - name: Sentry User Auth Token
+      key: Authorization
+      required: false
+      sensitive: true
+      prefix: "Sentry-Bearer "
+      description: Sentry User Auth Token for token auth; leave empty when using OAuth
