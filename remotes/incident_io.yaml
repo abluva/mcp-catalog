@@ -14,17 +14,64 @@ description: |
 
   ## What you'll need to connect
 
-  **Required:**
-  - **incident.io Account**: Sign in through incident.io's OAuth flow
-  - **Remote MCP Enabled**: Enable the server under Settings → MCP in incident.io
-  - **Redirect Domain Approval**: An incident.io admin may need to allow your client's redirect domain under Settings → MCP server
+  **Required (choose one):**
+  - **OAuth 2.0**: Each user signs in with their incident.io account and acts with that account's permissions. The connection lasts 28 days, after which it must be re-approved in the browser
+  - **API Key**: An incident.io API key created under **Settings → API keys**, sent as `Authorization: Bearer <key>`. Keys authenticate as a service actor rather than a specific user and do not expire until deleted. Grant only the permissions required by the tools you intend to use. See [connecting for automated systems](https://docs.incident.io/ai/remote-mcp#for-automated-systems-api-keys)
 
-  **Read and write:** This connector can declare and update incidents, create follow-ups, respond to pages, and submit feedback. It acts with the permissions of the connected incident.io user, so review proposed actions before approving them.
+  **Also required:**
+  - **Team, Pro, or Enterprise plan**: The remote MCP server is not available on the Basic (free) plan
+  - **Remote MCP Enabled**: Enable the server under **Settings → MCP** in incident.io
+  - **Redirect Domain Approval** (OAuth only): An incident.io admin must allow your client's redirect domain under **Settings → MCP server → Allowed redirect domains** (up to five). Only built-in clients such as Claude, ChatGPT, and Cursor are trusted automatically; authorization fails until the domain is added, and the exact domain to add is shown in the error
+
+  **Read and write:** This connector can declare and update incidents, create follow-ups, respond to pages, and submit feedback. It acts with the permissions of the connected incident.io user or API key, so review proposed actions before approving them.
 
 metadata:
   categories: Incident Management, Developer Tools, Monitoring
+  # vendorIdentity is intentionally omitted. incident.io exposes no current-user
+  # MCP tool: user_list searches for users by name or email, and resource_show
+  # returns organisation config. The documented REST fallback
+  # (GET https://api.incident.io/v1/identity) only reports the API key's name,
+  # roles, team_roles, teams, and dashboard_url; its IdentityV1 schema carries no
+  # user id, email, or person name. API keys also resolve to a service actor
+  # rather than a person. No identity field contract has been verified, so both
+  # mechanisms declare requiresVendorIdentity: false.
+  #
+  # authMechanisms declares vendor auth options shown at launch. Each deployment
+  # instance picks one; filter-selector routes by metadata.auth_mechanism.
+  authMechanisms: |
+    [
+      {
+        "value": "oauth",
+        "label": "OAuth 2.0",
+        "description": "Sign in with incident.io; actions are attributed to the approving user. An admin must allow the redirect domain, and the connection needs re-approval every 28 days.",
+        "requiresVendorIdentity": false
+      },
+      {
+        "value": "pat",
+        "label": "API Key",
+        "description": "Use an incident.io API key for this deployment (no per-user vendor OAuth). Acts as a service actor and does not expire.",
+        "requiresVendorIdentity": false,
+        "headers": [
+          {
+            "name": "incident.io API Key",
+            "key": "Authorization",
+            "required": true,
+            "sensitive": true,
+            "prefix": "Bearer ",
+            "description": "incident.io API key with the permissions required by the tools you use"
+          }
+        ]
+      }
+    ]
 icon: https://mintcdn.com/incidentio-18bb4170/wAjjotZaBNBJxKDy/incident-icon-alarmalade-light.svg
 repoURL: https://docs.incident.io/ai/remote-mcp
 runtime: remote
 remoteConfig:
   fixedURL: https://mcp.incident.io/mcp
+  headers:
+    - name: incident.io API Key
+      key: Authorization
+      required: false
+      sensitive: true
+      prefix: "Bearer "
+      description: incident.io API key for key auth; leave empty when using OAuth
