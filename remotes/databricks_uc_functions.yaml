@@ -26,6 +26,41 @@ description: |
 
 metadata:
   categories: Data Analytics, Business Intelligence
+  # vendorIdentity is intentionally omitted. Databricks exposes no current-user
+  # MCP tool. The documented REST fallback (GET /api/2.0/preview/scim/v2/Me,
+  # which accepts any scoped token and returns id and userName) lives on the
+  # per-workspace host, so a probe would need ${DATABRICKS_WORKSPACE_URL}
+  # expanded in its URL. Add vendorIdentity only after that is verified.
+  #
+  # authMechanisms declares vendor auth options shown at launch. Each deployment
+  # instance picks one; filter-selector routes by metadata.auth_mechanism.
+  # Databricks MCP endpoints do not support dynamic client registration, so
+  # OAuth requires an account-admin-registered OAuth app (App connections).
+  authMechanisms: |
+    [
+      {
+        "value": "oauth",
+        "label": "OAuth 2.0",
+        "description": "Sign in with Databricks using an OAuth app registered by an account admin; request the unity-catalog and offline_access scopes.",
+        "requiresVendorIdentity": false
+      },
+      {
+        "value": "pat",
+        "label": "Personal Access Token",
+        "description": "Use a Databricks PAT for a user or service principal (no per-user vendor OAuth).",
+        "requiresVendorIdentity": false,
+        "headers": [
+          {
+            "name": "Personal Access Token",
+            "key": "Authorization",
+            "required": true,
+            "sensitive": true,
+            "prefix": "Bearer ",
+            "description": "Databricks PAT with access to the Unity Catalog functions"
+          }
+        ]
+      }
+    ]
 icon: https://avatars.githubusercontent.com/u/4998052?s=200&v=4
 repoURL: https://docs.databricks.com/aws/en/generative-ai/mcp/
 
@@ -49,10 +84,11 @@ env:
 runtime: remote
 remoteConfig:
   urlTemplate: ${DATABRICKS_WORKSPACE_URL}/api/2.0/mcp/functions/${DATABRICKS_FUNCTIONS_CATALOG}/${DATABRICKS_FUNCTIONS_SCHEMA}
+  staticOAuthRequired: true
   headers:
   - name: Personal Access Token
-    description: Databricks PAT
+    description: Optional. Databricks PAT for PAT auth; leave empty when using OAuth.
     key: Authorization
-    required: true
+    required: false
     sensitive: true
     prefix: "Bearer "
