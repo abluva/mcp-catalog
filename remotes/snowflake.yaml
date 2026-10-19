@@ -1,50 +1,119 @@
 name: Snowflake
 entryKey: ablv-snowflake
 serverUserType: singleUser
-shortDescription: Connect to a Snowflake-managed MCP server with OAuth and native RBAC
+shortDescription: Query governed Snowflake data with Cortex Agents, Search, and Analyst tools
 upgradeNote: |
   This replaces the Obot-hosted Snowflake Labs server with Snowflake's managed MCP server.
 
-  - **Reconnect required:** Configure a Snowflake account URL, database, schema, MCP server name, and OAuth security integration.
+  - **Reconnect required:** Configure a Snowflake account URL, database, schema, and MCP server name, then choose an authentication method — Snowflake OAuth (or a bound External OAuth provider) or a Programmatic Access Token.
   - **Compatibility:** Username/password authentication and Service Config YAML are no longer supported.
+  - **User prerequisites:** Each connecting user needs a `DEFAULT_WAREHOUSE` and a `DEFAULT_ROLE` that holds access to the MCP server and its tools. Sessions fail to initialize without a default warehouse.
   - **Tool changes:** Tool names, parameters, and availability are defined by the configured Snowflake MCP server.
 description: |
   Query and manage Snowflake data through [Snowflake's managed MCP server](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp). Snowflake hosts the endpoint and uses native role-based access control for the server and each configured tool.
+
+  See Snowflake's [managed MCP server documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp) for setup instructions, authentication options, privileges, and current limitations.
 
   ## Features
   - **Cortex Agents**: Expose governed Cortex Agents as tools
   - **Cortex Search and Analyst**: Query unstructured data and semantic views
   - **SQL Execution**: Run read-only or administrator-enabled SQL
   - **Custom Tools**: Invoke Snowflake UDFs and stored procedures
-  - **OAuth Authentication**: Authenticate each user through Snowflake OAuth or External OAuth
+  - **Native RBAC**: Snowflake privileges govern both server access and each individual tool
 
   The available tools are defined by your Snowflake administrator when creating the MCP server, so they vary by endpoint.
 
   ## What you'll need to connect
 
-  An administrator must create a Snowflake MCP server, grant users access to it and its underlying tools, and configure an OAuth security integration for Obot's callback URL.
-
-  Follow [Snowflake's managed MCP server setup instructions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp) before connecting this catalog entry.
+  An administrator must create a Snowflake MCP server object, grant a least-privileged access role on the server and on each underlying tool, and prepare the authentication method you plan to use.
 
   After setup, provide the Snowflake account URL, database, schema, and MCP server name shown in your server endpoint.
+
+  Snowflake supports two authentication methods for this entry. Pick one per deployment.
+
+  **OAuth 2.0 (recommended):** Snowflake's managed MCP server does not support dynamic client registration, so an administrator must create an OAuth security integration and supply its client ID and secret. Use `OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'`, set `OAUTH_REDIRECT_URI` to the callback URL shown by Obot, and restrict `ALLOWED_ROLES_LIST` to the MCP access role. Retrieve the credentials with `SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('<INTEGRATION_NAME>');` — the integration name is case sensitive and must be uppercase. A single integration can be shared by all users in the account and can serve multiple MCP servers; each user still authenticates individually.
+
+  Snowflake recommends leaving `OAUTH_USE_SECONDARY_ROLES = NONE` so the session uses only the connecting user's default role.
+
+  **Programmatic Access Token:** Pass a Snowflake Programmatic Access Token as a bearer token. Scope it to the least-privileged role that holds `USAGE` on the MCP server and on each tool it exposes, since a leaked token carries that role's access.
+
+  ### Required user settings
+
+  Both methods depend on per-user defaults, because MCP sessions run with the user's default role:
+
+  - Set `DEFAULT_WAREHOUSE` on each user. Sessions fail to initialize when it is null.
+  - Set `DEFAULT_ROLE` to the MCP access role. Most clients request the `session:role:all` scope, which uses the default role rather than activating every role.
+  - Grant `USAGE` on the MCP server **and** the privilege each tool requires. Access to the server does not grant access to its tools.
+
+  ### External OAuth
+
+  To authenticate against your own identity provider, bind an External OAuth security integration with `OAUTH_AUTHORIZATION_SERVER` at the account, database, or schema level. Snowflake then advertises that issuer in Protected Resource Metadata and **rejects** Snowflake OAuth tokens for MCP endpoints, so the client ID and secret must come from your provider instead of `SYSTEM$SHOW_OAUTH_CLIENT_SECRETS`. If the bound integration is dropped or disabled, Snowflake does not fall back to Snowflake OAuth and all MCP OAuth requests are rejected.
+
+  ## Important considerations
+  - **Network policies**: Requests reach Snowflake from Obot's infrastructure, not the end user's browser. If your account uses network policies, add Obot's outbound IP addresses to an ingress network rule. A blocked token request can return `error: invalid_client`, which looks identical to a credential problem.
+  - **Account hostnames**: Use hyphens (`-`) rather than underscores (`_`) in the account URL. Hostnames containing underscores have known connection issues.
+  - **PrivateLink**: For a PrivateLink account reached from a hosted client, use the public MCP server URL and set `USE_PRIVATELINK_FOR_AUTHORIZATION_ENDPOINT = TRUE` on the OAuth security integration.
+  - **Limits**: Each MCP server supports up to 50 tools. Generic and SQL execution tool responses are truncated at 250 KB. Only tool capabilities are supported — not resources, prompts, roots, notifications, or sampling.
+  - **Replication**: MCP server objects are not replicated in failover groups and must be recreated on a secondary account. OAuth security integrations are replicated.
 
   > **Upgrade notice**
   >
   > If you're upgrading this server, note that this replaces the Obot-hosted Snowflake Labs server with Snowflake's managed MCP server.
   >
-  > - **Reconnect required:** Configure a Snowflake account URL, database, schema, MCP server name, and OAuth security integration.
+  > - **Reconnect required:** Configure a Snowflake account URL, database, schema, and MCP server name, then choose an authentication method — Snowflake OAuth (or a bound External OAuth provider) or a Programmatic Access Token.
   > - **Compatibility:** Username/password authentication and Service Config YAML are no longer supported.
+  > - **User prerequisites:** Each connecting user needs a `DEFAULT_WAREHOUSE` and a `DEFAULT_ROLE` that holds access to the MCP server and its tools. Sessions fail to initialize without a default warehouse.
   > - **Tool changes:** Tool names, parameters, and availability are defined by the configured Snowflake MCP server.
 
 metadata:
   categories: Data Warehouse, SQL, Analytics, Database Management
+  # vendorIdentity is intentionally omitted. The tool list is defined by the
+  # administrator who creates the MCP server object, so no tool is guaranteed to
+  # exist, let alone a current-user tool. Snowflake also has no REST
+  # current-user endpoint: identity would require the SQL API
+  # (POST /api/v2/statements running SELECT CURRENT_USER()), which is a
+  # different endpoint, needs a warehouse, and would need
+  # ${SNOWFLAKE_ACCOUNT_URL} expanded in its URL. A Programmatic Access Token
+  # may also belong to a service user rather than a person. Add vendorIdentity
+  # only after verifying a token against such an endpoint.
+  #
+  # authMechanisms declares vendor auth options shown at launch. Each deployment
+  # instance picks one; filter-selector routes by metadata.auth_mechanism.
+  # The Snowflake-managed MCP server does not support dynamic client
+  # registration, so OAuth requires an admin-created security integration
+  # (or a bound External OAuth integration) and uses staticOAuthRequired.
+  authMechanisms: |
+    [
+      {
+        "value": "oauth",
+        "label": "OAuth 2.0",
+        "description": "Sign in with Snowflake using an admin-created OAuth security integration, or with a bound External OAuth identity provider; the session runs with the user's default role.",
+        "requiresVendorIdentity": false
+      },
+      {
+        "value": "pat",
+        "label": "Programmatic Access Token",
+        "description": "Use a Snowflake Programmatic Access Token scoped to a least-privileged role (no per-user vendor OAuth).",
+        "requiresVendorIdentity": false,
+        "headers": [
+          {
+            "name": "Programmatic Access Token",
+            "key": "Authorization",
+            "required": true,
+            "sensitive": true,
+            "prefix": "Bearer ",
+            "description": "Snowflake Programmatic Access Token whose role holds USAGE on the MCP server and the privileges required by each tool"
+          }
+        ]
+      }
+    ]
 icon: https://avatars.githubusercontent.com/u/6453780?s=48&v=4
 repoURL: https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp
 
 env:
   - name: Snowflake Account URL
     key: SNOWFLAKE_ACCOUNT_URL
-    description: Your Snowflake account URL without a trailing slash (for example, https://myorg-myaccount.snowflakecomputing.com)
+    description: Your Snowflake account URL without a trailing slash, using hyphens rather than underscores (for example, https://myorg-myaccount.snowflakecomputing.com)
     required: true
     sensitive: false
   - name: Snowflake Database
@@ -67,3 +136,10 @@ runtime: remote
 remoteConfig:
   urlTemplate: ${SNOWFLAKE_ACCOUNT_URL}/api/v2/databases/${SNOWFLAKE_DATABASE}/schemas/${SNOWFLAKE_SCHEMA}/mcp-servers/${SNOWFLAKE_MCP_SERVER}
   staticOAuthRequired: true
+  headers:
+    - name: Programmatic Access Token
+      description: Optional. Snowflake Programmatic Access Token for token auth; leave empty when using OAuth.
+      key: Authorization
+      required: false
+      sensitive: true
+      prefix: "Bearer "
