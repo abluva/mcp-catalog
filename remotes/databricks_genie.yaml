@@ -80,7 +80,7 @@ env:
 runtime: remote
 remoteConfig:
   urlTemplate: ${DATABRICKS_WORKSPACE_URL}/api/2.0/mcp/genie/${DATABRICKS_GENIE_SPACE_ID}
-  staticOAuthRequired: true
+  # staticOAuthRequired: true
   headers:
   - name: Personal Access Token
     description: Optional. Databricks PAT for PAT auth; leave empty when using OAuth.
