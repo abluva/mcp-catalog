@@ -79,8 +79,7 @@ env:
 
 runtime: remote
 remoteConfig:
-  # urlTemplate: ${DATABRICKS_WORKSPACE_URL}/api/2.0/mcp/genie/${DATABRICKS_GENIE_SPACE_ID}
-  fixedURL: https://dbc-47c1f1f9-4502.cloud.databricks.com/api/2.0/mcp/genie/01f1a1ec2fa81e4cb7744cb85c7c19bf
+  urlTemplate: ${DATABRICKS_WORKSPACE_URL}/api/2.0/mcp/genie/${DATABRICKS_GENIE_SPACE_ID}
   staticOAuthRequired: true
   headers:
   - name: Personal Access Token
