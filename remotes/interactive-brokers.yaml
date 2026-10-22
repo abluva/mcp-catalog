@@ -1,4 +1,4 @@
-name: Interactive Brokers (IBKR)
+name: Interactive Brokers IBKR
 entryKey: ablv-interactive-brokers
 serverUserType: singleUser
 shortDescription: Analyze IBKR portfolio data, market data, and trade instructions
