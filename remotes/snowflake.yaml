@@ -135,7 +135,7 @@ env:
 runtime: remote
 remoteConfig:
   urlTemplate: ${SNOWFLAKE_ACCOUNT_URL}/api/v2/databases/${SNOWFLAKE_DATABASE}/schemas/${SNOWFLAKE_SCHEMA}/mcp-servers/${SNOWFLAKE_MCP_SERVER}
-  staticOAuthRequired: true
+  #staticOAuthRequired: true
   headers:
     - name: Programmatic Access Token
       description: Optional. Snowflake Programmatic Access Token for token auth; leave empty when using OAuth.
